@@ -20,10 +20,26 @@ signals:
 public slots:
 
     void connectServer();
+    void disconnectServer();
     void initialize();
     void configureClient();
-    void start();
     void ping();
+
+    // Getter methods
+    void setPort(int portNumber);
+    void setHostAddress(QString hostAddress);
+    void sendMessage(QString topic, QString message);
+
+    // Setter methods
+    int port();
+    QString hostAddress();
+
+private:
+    int m_port;
+    QString m_hostAddress;
+    QMqttTopicName m_topic;
+    QString msg;
+
 };
 
 #endif // MQTTCLIENT_H
