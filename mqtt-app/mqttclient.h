@@ -11,11 +11,6 @@ class MqttClient : public QObject
     Q_OBJECT
 public:
     explicit MqttClient(QObject *parent = nullptr);
-//    QMqttSubscription m_sub;
-
-
-signals:
-
 
 public slots:
 
@@ -26,17 +21,16 @@ public slots:
     void ping();
     void subscribe(QString topic);
 
-    // Getter methods
     void setPort(int portNumber);
     void setHostAddress(QString hostAddress);
-    void sendMessage(QString topic, QString message);
+    void publishMessage(QString topic, QString message);
 
-    // Setter methods
     int port();
     QString hostAddress();
 
-    // Mqtt connector slots
-    void onMessageReceived(const QByteArray& message, const QMqttTopicName &topic);
+signals:
+    void messageReceived(QString topic, QString message);
+    void disconnectedServer();
 
 private:
     int m_port;

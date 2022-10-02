@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
+import MqttClient 1.0
 
 Window {
     minimumHeight: 480
@@ -12,12 +13,22 @@ Window {
     title: qsTr("Mqtt Application")
     color: "#e4e8c1"
 
-    Component.onCompleted: {
-        mqttclient.initialize();
+    MqttClient{
+        id: mqttClient
+        Component.onCompleted: mqttClient.initialize();
+        onMessageReceived: {
+            console.log("message: ", message);
+            console.log("topic: ", topic);
+            receivedMessageAreaText.text += message + "\n";
+            receivedTopicAreaText.text += topic + "\n";
+        }
+        onDisconnectedServer: {
+            connectToHostBackground.color = "#a8d5a6"
+        }
     }
 
     Text {
-        id: helloWorldText
+        id: initLabelText
         text: qsTr("Simple Mqtt Application\n")
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -200
@@ -102,7 +113,7 @@ Window {
         }
 
         onClicked: {
-            mqttclient.disconnectServer();
+            mqttClient.disconnectServer();
             connectToHostBackground.color = "#a8d5a6"
         }
 
@@ -122,9 +133,9 @@ Window {
 
         onClicked: {
             connectToHostBackground.color = "#46cfda"
-            mqttclient.setPort(parseInt(portText.text));
-            mqttclient.setHostAddress(brokerAddressText.text);
-            mqttclient.connectServer();
+            mqttClient.setPort(parseInt(portText.text));
+            mqttClient.setHostAddress(brokerAddressText.text);
+            mqttClient.connectServer();
         }
     }
 
@@ -163,7 +174,7 @@ Window {
     }
 
     Rectangle{
-        id: sendMessageRec
+        id: publishMessageRec
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -50
         anchors.verticalCenterOffset: -20
@@ -173,7 +184,7 @@ Window {
         color: "#ef8771"
 
         Label{
-            id: sendMessageLab
+            id: publishMessageLab
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
             text: "Message"
@@ -181,7 +192,7 @@ Window {
         }
 
         TextEdit{
-            id: sendMessageText
+            id: publishMessageText
             anchors.centerIn: parent
             text: "testing"
         }
@@ -189,7 +200,7 @@ Window {
 
 
     Button{
-        id: sendMessageBtn
+        id: publishMessageBtn
         text: "Send Message"
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -50
@@ -200,7 +211,7 @@ Window {
         }
 
         onClicked: {
-            mqttclient.sendMessage(sendTopicText.text, sendMessageText.text);
+            mqttClient.publishMessage(sendTopicText.text, publishMessageText.text);
         }
     }
 
@@ -250,7 +261,7 @@ Window {
         }
 
         onClicked: {
-            mqttclient.subscribe(subTopicText.text);
+            mqttClient.subscribe(subTopicText.text);
         }
     }
 
@@ -273,7 +284,7 @@ Window {
         }
 
         TextArea{
-            id: receivedTopicArea
+            id: receivedTopicAreaText
             width: 100
             height: 300
             text: ""
@@ -300,13 +311,34 @@ Window {
         }
 
         TextArea{
-            id: receivedMessageArea
+            id: receivedMessageAreaText
             width: 100
             height: 300
             text: ""
         }
-
     }
+
+    Rectangle{
+        id: clearMessageAreaRec
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 60
+        anchors.horizontalCenterOffset: 245
+
+        Button{
+            id: clearMessageAreaBtn
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -190
+            anchors.horizontalCenterOffset: 70
+            width: 50
+            height: 30
+            text: "clear"
+            background: Rectangle {
+                id: clearMessageAreaBtnBackground
+                color: "#a8d5a6"
+            }
+        }
+    }
+
 
 }
 

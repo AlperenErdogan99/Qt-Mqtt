@@ -34,7 +34,12 @@ void MqttClient::configureClient(){
     qDebug() << "Configuring Client";
     m_client->setHostname("localhost");
     m_client->setPort(1883);
-    connect(m_client.data(), SIGNAL(messageReceived(QByteArray,QMqttTopicName)), this, SLOT(onMessageReceived(QByteArray,QMqttTopicName)));
+
+    connect(m_client.data(), &QMqttClient::messageReceived, this, [&](const QByteArray &message, const QMqttTopicName &topic) {
+        emit messageReceived(topic.name(), message);
+    });
+
+    connect(m_client.data(), &QMqttClient::disconnected, this, &MqttClient::disconnectedServer);
 
 }
 
@@ -45,28 +50,19 @@ void MqttClient::ping(){
 }
 
 void MqttClient::subscribe(QString topic){
+    qDebug() << "Subscribing " << topic;
     QMqttTopicFilter subTopic = topic;
     m_client->subscribe(subTopic);
-
-//    connect(m_client.data(), &QMqttClient::messageReceived, this, [&](const QByteArray &message, const QMqttTopicName &topic) {
-//        const QString content = QDateTime::currentDateTime().toString()
-//                    + QLatin1String(" Received Topic: ")
-//                    + topic.name()
-//                    + QLatin1String(" Message: ")
-//                    + message
-//                    + QLatin1Char('\n');
-//        qDebug() << "Message: " << content;
-//    });
-
-//    connect(m_client.data(), SIGNAL(messageReceived(QByteArray,QMqttTopicName)), this, SLOT(onMessageReceived(QByteArray,QMqttTopicName)));
 }
 
 
 void MqttClient::setPort(int portNumber){
+    qDebug() << "Setting port to " << portNumber;
     m_client->setPort(portNumber);
 }
 
 void MqttClient::setHostAddress(QString hostAddress){
+    qDebug() << "Setting host name to " << hostAddress;
     m_client->setHostname(hostAddress);
 }
 
@@ -78,12 +74,7 @@ QString MqttClient::hostAddress(){
     return m_client->hostname();
 }
 
-void MqttClient::onMessageReceived(const QByteArray &message, const QMqttTopicName &topic){
-    qDebug() << "Message: " << message;
-    qDebug() << "topic: " << topic.name();
-}
-
-void MqttClient::sendMessage(QString topic, QString message){
+void MqttClient::publishMessage(QString topic, QString message){
     QMqttTopicName tTopic;
     tTopic.setName(topic);
     m_client->publish(tTopic, message.toUtf8());
