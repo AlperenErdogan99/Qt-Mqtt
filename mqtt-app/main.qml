@@ -13,17 +13,21 @@ Window {
     title: qsTr("Mqtt Application")
     color: "#e4e8c1"
 
-    MqttClient{
+    MqttClient {
         id: mqttClient
         Component.onCompleted: mqttClient.initialize();
+
         onMessageReceived: {
-            console.log("message: ", message);
-            console.log("topic: ", topic);
             receivedMessageAreaText.text += message + "\n";
             receivedTopicAreaText.text += topic + "\n";
         }
+
         onDisconnectedServer: {
-            connectToHostBackground.color = "#a8d5a6"
+            conStateText.text = "Not Connected";
+        }
+
+        onConnectedServer: {
+            conStateText.text = "Connected";
         }
     }
 
@@ -48,7 +52,7 @@ Window {
 
     }
 
-    Rectangle{
+    Rectangle {
         id: brokerAddressRect
         width: 100
         height: 40
@@ -58,7 +62,7 @@ Window {
         anchors.verticalCenterOffset: -130
         color: "#ef8771"
 
-        Label{
+        Label {
             id: brokerAddressLabel
             text: "Broker address"
             anchors.centerIn: parent
@@ -74,7 +78,7 @@ Window {
 
     }
 
-    Rectangle{
+    Rectangle {
         id: portConfigRect
         width: 100
         height: 40
@@ -84,7 +88,7 @@ Window {
         anchors.verticalCenterOffset: -20
         color: "#ef8771"
 
-        Label{
+        Label {
             id: portLabel
             text: "Port Number"
             anchors.centerIn: parent
@@ -92,34 +96,14 @@ Window {
             font.bold: true
         }
 
-        TextEdit{
+        TextEdit {
             id: portText
             text: "1883"
             anchors.centerIn: parent
         }
-
     }
 
-    // Create disconnect button here
-    Button{
-        id: disconnectFromHostBtn
-        text: "Disconnect from host"
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -220
-        anchors.verticalCenterOffset: 100
-
-        background: Rectangle {
-            color: "#a8d5a6"
-        }
-
-        onClicked: {
-            mqttClient.disconnectServer();
-            connectToHostBackground.color = "#a8d5a6"
-        }
-
-    }
-
-    Button{
+    Button {
         id: connectToHost
         text: "Connect to Host"
         anchors.centerIn: parent
@@ -127,19 +111,42 @@ Window {
         anchors.verticalCenterOffset: 50
 
         background: Rectangle {
-            id: connectToHostBackground
-            color: "#a8d5a6"
+            color: parent.down ? "#94e2d8" : (parent.hovered ? "#94e2a4" : "#b8e2ce")
         }
 
         onClicked: {
-            connectToHostBackground.color = "#46cfda"
             mqttClient.setPort(parseInt(portText.text));
             mqttClient.setHostAddress(brokerAddressText.text);
             mqttClient.connectServer();
         }
     }
 
-    Rectangle{
+    Button {
+        id: disconnectFromHostBtn
+        text: "Disconnect from host"
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: -220
+        anchors.verticalCenterOffset: 100
+
+        background: Rectangle {
+            color: parent.down ? "#94e2d8" : (parent.hovered ? "#94e2a4" : "#b8e2ce")
+        }
+
+        onClicked: {
+            mqttClient.disconnectServer();
+        }
+    }
+
+    Text {
+        id: conStateText
+        text: "Not Connected"
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: -220
+        anchors.verticalCenterOffset: 150
+    }
+
+
+    Rectangle {
         id: seperatorLine1
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -130
@@ -148,7 +155,7 @@ Window {
         color: "#8ab9e8"
     }
 
-    Rectangle{
+    Rectangle {
         id: sendTopicRec
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -50
@@ -158,7 +165,7 @@ Window {
         radius: 40
         color: "#ef8771"
 
-        Label{
+        Label {
             id: sendTopicLab
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
@@ -166,14 +173,14 @@ Window {
             font.bold: true
         }
 
-        TextEdit{
+        TextEdit {
             id: sendTopicText
             anchors.centerIn: parent
             text: "test"
         }
     }
 
-    Rectangle{
+    Rectangle {
         id: publishMessageRec
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -50
@@ -183,7 +190,7 @@ Window {
         radius: 50
         color: "#ef8771"
 
-        Label{
+        Label {
             id: publishMessageLab
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
@@ -199,7 +206,7 @@ Window {
     }
 
 
-    Button{
+    Button {
         id: publishMessageBtn
         text: "Send Message"
         anchors.centerIn: parent
@@ -207,7 +214,8 @@ Window {
         anchors.verticalCenterOffset: 50
 
         background: Rectangle {
-            color: "#a8d5a6"
+                color: parent.down ? "#94e2d8" :
+                        (parent.hovered ? "#94e2a4" : "#b8e2ce")
         }
 
         onClicked: {
@@ -215,7 +223,7 @@ Window {
         }
     }
 
-    Rectangle{
+    Rectangle {
         id: seperatorLine2
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: 30
@@ -224,7 +232,7 @@ Window {
         color: "#8ab9e8"
     }
 
-    Rectangle{
+    Rectangle {
         id: subTopicRec
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: 105
@@ -234,7 +242,7 @@ Window {
         radius: 40
         color: "#ef8771"
 
-        Label{
+        Label {
             id: subTopicLab
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
@@ -242,22 +250,22 @@ Window {
             font.bold: true
         }
 
-        TextEdit{
+        TextEdit {
             id: subTopicText
             anchors.centerIn: parent
             text: "test"
         }
     }
 
-    Button{
+    Button {
         id: subTopicBtn
         text: "Subscribe Topic"
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: 230
-        anchors.verticalCenterOffset: -130
+        anchors.verticalCenterOffset: -130   
 
         background: Rectangle {
-            color: "#a8d5a6"
+            color: parent.down ? "#94e2d8" : (parent.hovered ? "#94e2a4" : "#b8e2ce")
         }
 
         onClicked: {
@@ -265,7 +273,7 @@ Window {
         }
     }
 
-    Rectangle{
+    Rectangle {
         id: receivedTopicRec
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 60
@@ -275,7 +283,7 @@ Window {
         width: 75
         height: 250
 
-        Label{
+        Label {
             id: receivedTopicAreaLabel
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -140
@@ -283,7 +291,7 @@ Window {
             text: "Topic"
         }
 
-        TextArea{
+        Text {
             id: receivedTopicAreaText
             width: 100
             height: 300
@@ -292,7 +300,7 @@ Window {
 
     }
 
-    Rectangle{
+    Rectangle {
         id: receivedMessageRect
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 60
@@ -302,7 +310,7 @@ Window {
         width: 150
         height: 250
 
-        Label{
+        Label {
             id: receivedMessageAreaLabel
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -140
@@ -310,7 +318,7 @@ Window {
             text: "Message"
         }
 
-        TextArea{
+        Text {
             id: receivedMessageAreaText
             width: 100
             height: 300
@@ -318,13 +326,13 @@ Window {
         }
     }
 
-    Rectangle{
+    Rectangle {
         id: clearMessageAreaRec
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 60
         anchors.horizontalCenterOffset: 245
 
-        Button{
+        Button {
             id: clearMessageAreaBtn
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -190
@@ -332,13 +340,11 @@ Window {
             width: 50
             height: 30
             text: "clear"
-            background: Rectangle {
-                id: clearMessageAreaBtnBackground
-                color: "#a8d5a6"
+
+            background: Rectangle  {
+                color: parent.down ? "#94e2d8" : (parent.hovered ? "#94e2a4" : "#b8e2ce")
             }
         }
     }
-
-
 }
 

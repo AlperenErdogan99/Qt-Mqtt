@@ -36,11 +36,13 @@ void MqttClient::configureClient(){
     m_client->setPort(1883);
 
     connect(m_client.data(), &QMqttClient::messageReceived, this, [&](const QByteArray &message, const QMqttTopicName &topic) {
+        qDebug() << "Message: " << message;
+        qDebug() << "Topic: " << topic.name();
         emit messageReceived(topic.name(), message);
     });
 
     connect(m_client.data(), &QMqttClient::disconnected, this, &MqttClient::disconnectedServer);
-
+    connect(m_client.data(), &QMqttClient::connected, this, &MqttClient::connectedServer);
 }
 
 void MqttClient::ping(){

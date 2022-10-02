@@ -31,6 +31,7 @@ public slots:
 signals:
     void messageReceived(QString topic, QString message);
     void disconnectedServer();
+    void connectedServer();
 
 private:
     int m_port;
