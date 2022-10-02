@@ -11,9 +11,9 @@ class MqttClient : public QObject
     Q_OBJECT
 public:
     explicit MqttClient(QObject *parent = nullptr);
+//    QMqttSubscription m_sub;
 
-private:
-    QSharedPointer<QMqttClient> m_client;
+
 signals:
 
 
@@ -24,6 +24,7 @@ public slots:
     void initialize();
     void configureClient();
     void ping();
+    void subscribe(QString topic);
 
     // Getter methods
     void setPort(int portNumber);
@@ -34,11 +35,15 @@ public slots:
     int port();
     QString hostAddress();
 
+    // Mqtt connector slots
+    void onMessageReceived(const QByteArray& message, const QMqttTopicName &topic);
+
 private:
     int m_port;
     QString m_hostAddress;
     QMqttTopicName m_topic;
     QString msg;
+    QSharedPointer<QMqttClient> m_client;
 
 };
 

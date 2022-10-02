@@ -18,11 +18,23 @@ Window {
 
     Text {
         id: helloWorldText
-        text: qsTr("Mqtt Client Application\n")
+        text: qsTr("Simple Mqtt Application\n")
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -200
         visible: true
         font.pointSize: 15
+        font.bold: true
+    }
+
+    Text {
+        id: designedByText
+        text: qsTr("Developed by Last Pr Warrior")
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 220
+        anchors.horizontalCenterOffset: 270
+        font.pointSize: 8
+        font.italic: true
+
     }
 
     Rectangle{
@@ -40,6 +52,7 @@ Window {
             text: "Broker address"
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
+            font.bold: true
         }
 
         TextEdit{
@@ -65,6 +78,7 @@ Window {
             text: "Port Number"
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
+            font.bold: true
         }
 
         TextEdit{
@@ -138,6 +152,7 @@ Window {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
             text: "Topic Name"
+            font.bold: true
         }
 
         TextEdit{
@@ -162,6 +177,7 @@ Window {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -40
             text: "Message"
+            font.bold: true
         }
 
         TextEdit{
@@ -197,6 +213,100 @@ Window {
         color: "#8ab9e8"
     }
 
+    Rectangle{
+        id: subTopicRec
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: 105
+        anchors.verticalCenterOffset: -130
+        width: 100
+        height: 40
+        radius: 40
+        color: "#ef8771"
+
+        Label{
+            id: subTopicLab
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -40
+            text: "Sub Topic Name"
+            font.bold: true
+        }
+
+        TextEdit{
+            id: subTopicText
+            anchors.centerIn: parent
+            text: "test"
+        }
+    }
+
+    Button{
+        id: subTopicBtn
+        text: "Subscribe Topic"
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: 230
+        anchors.verticalCenterOffset: -130
+
+        background: Rectangle {
+            color: "#a8d5a6"
+        }
+
+        onClicked: {
+            mqttclient.subscribe(subTopicText.text);
+        }
+    }
+
+    Rectangle{
+        id: receivedTopicRec
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 60
+        anchors.horizontalCenterOffset: 105
+        radius: 10
+        color: "white"
+        width: 75
+        height: 250
+
+        Label{
+            id: receivedTopicAreaLabel
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -140
+            font.bold: true
+            text: "Topic"
+        }
+
+        TextArea{
+            id: receivedTopicArea
+            width: 100
+            height: 300
+            text: ""
+        }
+
+    }
+
+    Rectangle{
+        id: receivedMessageRect
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 60
+        anchors.horizontalCenterOffset: 245
+        radius: 10
+        color: "white"
+        width: 150
+        height: 250
+
+        Label{
+            id: receivedMessageAreaLabel
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -140
+            font.bold: true
+            text: "Message"
+        }
+
+        TextArea{
+            id: receivedMessageArea
+            width: 100
+            height: 300
+            text: ""
+        }
+
+    }
 
 }
 

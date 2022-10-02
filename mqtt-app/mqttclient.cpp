@@ -34,12 +34,31 @@ void MqttClient::configureClient(){
     qDebug() << "Configuring Client";
     m_client->setHostname("localhost");
     m_client->setPort(1883);
+    connect(m_client.data(), SIGNAL(messageReceived(QByteArray,QMqttTopicName)), this, SLOT(onMessageReceived(QByteArray,QMqttTopicName)));
+
 }
 
 void MqttClient::ping(){
     QMqttTopicName pingTopic;
     pingTopic.setName("pingTopic");
     m_client->publish(pingTopic, "ping");
+}
+
+void MqttClient::subscribe(QString topic){
+    QMqttTopicFilter subTopic = topic;
+    m_client->subscribe(subTopic);
+
+//    connect(m_client.data(), &QMqttClient::messageReceived, this, [&](const QByteArray &message, const QMqttTopicName &topic) {
+//        const QString content = QDateTime::currentDateTime().toString()
+//                    + QLatin1String(" Received Topic: ")
+//                    + topic.name()
+//                    + QLatin1String(" Message: ")
+//                    + message
+//                    + QLatin1Char('\n');
+//        qDebug() << "Message: " << content;
+//    });
+
+//    connect(m_client.data(), SIGNAL(messageReceived(QByteArray,QMqttTopicName)), this, SLOT(onMessageReceived(QByteArray,QMqttTopicName)));
 }
 
 
@@ -57,6 +76,11 @@ int MqttClient::port(){
 
 QString MqttClient::hostAddress(){
     return m_client->hostname();
+}
+
+void MqttClient::onMessageReceived(const QByteArray &message, const QMqttTopicName &topic){
+    qDebug() << "Message: " << message;
+    qDebug() << "topic: " << topic.name();
 }
 
 void MqttClient::sendMessage(QString topic, QString message){
