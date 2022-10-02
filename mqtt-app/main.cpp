@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
 
     // exposing C++ object to Qml
     qmlRegisterType<MqttClient>("MqttClient",1,0,"MqttClient");
-//    MqttClient *mqttclient = new MqttClient(&app);
-//    engine.rootContext()->setContextProperty("mqttclient", mqttclient);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
