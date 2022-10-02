@@ -27,7 +27,6 @@ void MqttClient::initialize(){
         });
         m_client.reset(new QMqttClient, &QObject::deleteLater);
     }
-
 }
 
 void MqttClient::configureClient(){
